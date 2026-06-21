@@ -3,9 +3,17 @@ prometheus.scrape "koyeb_app" {
     __address__      = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app",
     __scheme__       = "https",
     __metrics_path__ = "/v1/actuator/prometheus",
-"instance"       = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app",
   }]
-  scrape_interval = "60s"
+
+  // This block forces the metrics to take the labels the dashboard is looking for
+  target_mutator {
+    targets = [{
+      "instance"    = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app",
+      "application" = "spring-boot-app",
+    }]
+  }
+
+  scrape_interval = "30s"
   forward_to      = [prometheus.remote_write.grafanacloud.receiver]
 }
 
