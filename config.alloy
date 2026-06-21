@@ -1,0 +1,20 @@
+prometheus.scrape "koyeb_app" {
+  targets = [{
+    __address__      = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app",
+    __scheme__       = "https",
+    __metrics_path__ = "/v1/actuator/prometheus",
+  }]
+  scrape_interval = "60s"
+  forward_to      = [prometheus.remote_write.grafanacloud.receiver]
+}
+
+prometheus.remote_write "grafanacloud" {
+  endpoint {
+    url = "https://prometheus-prod-43-prod-ap-south-1.grafana.net/api/prom/push"
+
+    basic_auth {
+      username = "3319508"
+      password = sys.env("GRAFANA_API_TOKEN")
+    }
+  }
+}
