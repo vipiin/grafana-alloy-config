@@ -3,6 +3,7 @@ prometheus.scrape "koyeb_app" {
     __address__      = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app",
     __scheme__       = "https",
     __metrics_path__ = "/v1/actuator/prometheus",
+"instance"       = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app",
   }]
   scrape_interval = "60s"
   forward_to      = [prometheus.remote_write.grafanacloud.receiver]
