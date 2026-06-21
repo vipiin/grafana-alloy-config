@@ -4,17 +4,23 @@ prometheus.scrape "koyeb_app" {
     __scheme__       = "https",
     __metrics_path__ = "/v1/actuator/prometheus",
   }]
-
-  // This block forces the metrics to take the labels the dashboard is looking for
-  target_mutator {
-    targets = [{
-      "instance"    = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app",
-      "application" = "spring-boot-app",
-    }]
-  }
-
   scrape_interval = "30s"
-  forward_to      = [prometheus.remote_write.grafanacloud.receiver]
+  // Send metrics to the relabel component first instead of straight to remote_write
+  forward_to      = [prometheus.relabel.add_labels.receiver]
+}
+
+// This block correctly injects the labels your Grafana dashboard is looking for
+prometheus.relabel "add_labels" {
+  rule {
+    target_label = "instance"
+    replacement  = "friendly-cephalopod-vipiinorg-8101e118.koyeb.app"
+  }
+  rule {
+    target_label = "application"
+    replacement  = "spring-boot-app"
+  }
+  
+  forward_to = [prometheus.remote_write.grafanacloud.receiver]
 }
 
 prometheus.remote_write "grafanacloud" {
